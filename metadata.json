@@ -1,0 +1,8 @@
+{
+  "name": "HR Trainer",
+  "description": "Elite AI Career Architect and Interview Coach utilizing Gemini 3 Flash and Google Search Grounding to prepare you for real-world 2026 job markets.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
