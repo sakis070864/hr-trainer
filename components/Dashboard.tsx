@@ -154,28 +154,53 @@ const ActiveTokenList: React.FC = () => {
     const [tokens, setTokens] = useState<any[]>([]);
 
     React.useEffect(() => {
-        const fetchTokens = async () => {
+        let unsubscribe: () => void;
+
+        const setupListener = async () => {
             try {
-                const { collection, query, where, orderBy, limit, getDocs } = await import('firebase/firestore');
+                const { collection, query, where, orderBy, onSnapshot, doc, updateDoc } = await import('firebase/firestore');
                 const { db } = await import('../services/firebase');
 
-                // Get ALL active tokens
+                // Real-time listener for ALL active tokens
                 const q = query(
                     collection(db, 'accessTokens'),
                     where('status', '==', 'active'),
                     orderBy('createdAt', 'desc')
                 );
 
-                const snapshot = await getDocs(q);
-                setTokens(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+                unsubscribe = onSnapshot(q, (snapshot) => {
+                    const now = Date.now();
+                    const validTokens: any[] = [];
+
+                    snapshot.docs.forEach(d => {
+                        const data = d.data();
+                        const expiresAt = data.expiresAt?.toMillis ? data.expiresAt.toMillis() : 0;
+
+                        if (expiresAt > 0 && expiresAt < now) {
+                            // Token is active in DB but Time has passed.
+                            // "Inform the database" it is expired.
+                            updateDoc(doc(db, 'accessTokens', d.id), {
+                                status: 'expired'
+                            }).catch(e => console.error("Auto-expire failed", e));
+                        } else {
+                            // Token is truly alive
+                            validTokens.push({ id: d.id, ...data });
+                        }
+                    });
+
+                    setTokens(validTokens);
+                });
+
             } catch (err) {
-                console.error("Error fetching tokens", err);
+                console.error("Error setting up listener", err);
             }
         };
-        fetchTokens();
-        // Set up interval to refresh list every 10s
-        const interval = setInterval(fetchTokens, 10000);
-        return () => clearInterval(interval);
+
+        setupListener();
+
+        return () => {
+            if (unsubscribe) unsubscribe();
+        };
     }, []);
 
     const revokeToken = async (id: string) => {
