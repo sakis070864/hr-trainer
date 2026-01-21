@@ -1,5 +1,8 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Analytics } from "@vercel/analytics/react";
+import { injectSpeedInsights } from '@vercel/speed-insights';
+
+injectSpeedInsights();
 import { AppState, ViewMode, InterviewQuestion } from './types';
 import { searchInterviewQuestions, getCareerPathIntelligence, getSalaryIntelligence, getNetworkingIntelligence, batchFetchMasterclasses } from './services/geminiService';
 import Header from './components/Header';
