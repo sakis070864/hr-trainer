@@ -170,6 +170,37 @@ const SearchForm: React.FC<SearchFormProps> = ({ onSearch, disabled }) => {
               </div>
             )}
           </div>
+          <div className="flex flex-col items-center gap-3 mt-6">
+            <span className="text-indigo-400 text-lg font-bold uppercase tracking-widest">
+              Order Link
+            </span>
+            <div className="flex items-center gap-3 bg-white/5 px-5 py-2.5 rounded-2xl border border-white/10 hover:border-indigo-500/30 transition-all shadow-lg">
+              <a href="mailto:mastorematas@gmail.com" className="text-gray-300 font-medium hover:text-white transition-colors">
+                mastorematas@gmail.com
+              </a>
+              <div className="w-px h-4 bg-white/10 mx-1"></div>
+              <button
+                type="button"
+                onClick={() => {
+                  navigator.clipboard.writeText('mastorematas@gmail.com');
+                  const btn = document.getElementById('copy-btn');
+                  if (btn) {
+                    btn.innerHTML = `<svg class="w-6 h-6 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>`;
+                    setTimeout(() => {
+                      btn.innerHTML = `<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>`;
+                    }, 2000);
+                  }
+                }}
+                id="copy-btn"
+                className="text-gray-400 hover:text-indigo-400 transition-colors p-1"
+                title="Copy email address"
+              >
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+              </button>
+            </div>
+          </div>
         </div>
       </form>
     </div>
